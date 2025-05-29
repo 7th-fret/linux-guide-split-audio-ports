@@ -111,7 +111,7 @@ device.product.id = "0xa348"
 device.vendor.id = "0x8086"
 ```
 
-As we can see, this laptop has three audio profiles, one for all audio outputs 
+As we can see, this laptop has three audio profiles, one for all audio outputs
 and other for all inputs, with an extra one that has both inputs and outputs (yours may vary)
 
 ### 1.2 Inspect the audio sinks available for our sound card
@@ -198,17 +198,54 @@ As we can see, there is only one audio sink that can play audio on the two outpu
        ; volume = off
        ```
 
+       **NOTE** Depending on the version of your audio related packages (specific package and versions is unknown) this change may not be needed and cause both outputs to play audio at the same time, if it happens to you, revert this change and try step 5 again.
+
+       For reference, these are the package versions on my system where the above change wasn't needed:
+
+        <details>
+        <summary>Expand</summary>
+        ```sh
+        pacman -Q $(pacman -Qsq "alsa-*|pipewire|wireplumber")
+        alsa-card-profiles 1:1.4.2-1
+        alsa-lib 1.2.14-1
+        alsa-plugins 1:1.2.12-4
+        alsa-tools 1.2.14-1
+        alsa-topology-conf 1.2.5.1-4
+        alsa-ucm-conf 1.2.14-2
+        alsa-utils 1.2.14-1
+        easyeffects 7.2.3-2
+        gst-plugin-pipewire 1:1.4.2-1
+        kpipewire 6.3.5-1
+        lib32-alsa-lib 1.2.14-1
+        lib32-alsa-plugins 1.2.12-1
+        lib32-libpipewire 1:1.4.2-1
+        lib32-pipewire 1:1.4.2-1
+        libpipewire 1:1.4.2-1
+        libwireplumber 0.5.10-1
+        pipewire 1:1.4.2-1
+        pipewire-alsa 1:1.4.2-1
+        pipewire-audio 1:1.4.2-1
+        pipewire-jack 1:1.4.2-1
+        pipewire-pulse 1:1.4.2-1
+        qemu-audio-alsa 10.0.0-5
+        qemu-audio-pipewire 10.0.0-5
+        wireplumber 0.5.10-1
+        ```
+        </details>
+
 5. Save the changes and restart the audio server by running:
 
     ```sh
     systemctl restart --user pipewire pipewire-pulse pipewire.socket wireplumber
     ```
 
+    **NOTE** Applications that play/record audio need to be restarted every time you run the command above
+
 ### 2.1 Verify it worked
 
 If everything went well you should have the speaker option available without having to unplug your wired device and:
 
-- Should be able to play audio on them (individually)
+- Should be able to switch and play sound on both outputs (one at a time)
 - Audio streams should still change automatically from speakers to your wired output and vice versa when plugging/unplugging a wired device
 
 ![pavucontrol with speakers available](pics/linux-audio-mixer-speakers-available.png)
